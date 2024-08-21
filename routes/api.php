@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,9 +39,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => '/customers'], function() {
         Route::get('/list', [CustomerController::class, 'index']);
         Route::post('/', [CustomerController::class, 'store']);
-        //Route::post('/getList', [CustomerController::class, 'getList']);
         Route::get('/{id}', [CustomerController::class, 'show']);
         Route::put('/{id}', [CustomerController::class, 'update']);
         Route::delete('/{id}', [CustomerController::class, 'destroy']);
+    });
+    // Product management
+    Route::group(['prefix' => '/products'], function() {
+        Route::get('/list', [ProductController::class, 'index']);
+        Route::get('/categories', [ProductController::class, 'categories']);
+        Route::post('/', [ProductController::class, 'store']);
+        Route::get('/{id}', [ProductController::class, 'show']);
+        Route::post('/{id}', [ProductController::class, 'update']);
+        Route::delete('/{id}', [ProductController::class, 'destroy']);
     });
 });

@@ -61,7 +61,7 @@ class CustomerController extends Controller
         try {
             $data['customer'] = Customer::find($id);
 
-            if (empty( $data['customer'])) {
+            if (empty($data['customer'])) {
                 return $this->sendError("Customer not found", ["errors" => ['general' => "Customer not found"]], 404);
             }
 
@@ -111,7 +111,7 @@ class CustomerController extends Controller
      */
     public function destroy(string $id)
     {
-         try {
+        try {
              $data['customer'] = Customer::find($id);
 
             if (empty( $data['customer'])) {
