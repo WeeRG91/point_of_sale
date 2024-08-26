@@ -57,7 +57,7 @@ class ProductController extends Controller
                 'price' => 'required|numeric',
                 'image' => 'required|mimes:jpeg,png,jpg|max:5000',
             ]);
-
+            
             if ($validatedProduct->fails()) {
                 return $this->sendError("Please enter valid input data", $validatedProduct->errors(), 400);
             }
@@ -94,7 +94,7 @@ class ProductController extends Controller
     {
         try {
             $data['product'] = Product::with('category:id,name')->find($id);
-
+            
             if (empty($data['product'])) {
                 return $this->sendError("Product not found", ["errors" => ['general' => "Product not found"]], 404);
             }
@@ -112,7 +112,7 @@ class ProductController extends Controller
     {
         try {
             $data['product'] = Product::find($id);
-
+            //dd('update product');
             if (empty($data['product'])) {
                 return $this->sendError("Product not found", ["errors" => ['general' => "Product not found"]], 404);
             }
@@ -177,6 +177,24 @@ class ProductController extends Controller
             DB::commit();
 
             return $this->sendResponse("Product deleted successfully", $data, 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return $this->handleException($e);
+        }
+    }
+
+    public function productList(Request $request) : JsonResponse
+    {
+        try {
+            $query = DB::table('products');
+            if(!empty($request->search)) {
+                $query->where(function ($query) use ($request) {
+                    $query->orWhere('name', 'like', '%'.$request->search.'%');
+                });
+            }   
+
+            $data['products'] = $query->orderBy('name')->limit(100)->get(['id', DB::raw("name as label"), 'stock', 'price']);
+            return $this->sendResponse("Searched products fetched successfully", $data, 200);
         } catch (Exception $e) {
             DB::rollBack();
             return $this->handleException($e);
